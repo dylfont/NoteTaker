@@ -1,7 +1,9 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-// Helper method for generating unique ids
+const { v4: uuidv4 } = require('uuid');
+
+
 
 
 const PORT = 3001;
@@ -28,9 +30,14 @@ app.post("/api/notes",function(req,res){
         } 
         const allnotes = JSON.parse(data)   
         const newnote = req.body
-        //add id using uuid mpm package 
+        newnote.id=uuidv4();
         allnotes.push(newnote)
-        //write file with json stringified all notes and then after write file res json all notes
+    fs.writeFile("./db/db.json",JSON.stringify(allnotes),function(err){
+        if(err){
+            throw err
+        } 
+        res.json(allnotes) 
+    })     
         }) 
 })
 app.get("/notes",function(req,res){
